@@ -1,0 +1,5 @@
+{
+  "name": "PWN Admin",
+  "description": "A comprehensive management portal for monitoring system performance, user activity, and quiz attempts.",
+  "requestFramePermissions": []
+}
