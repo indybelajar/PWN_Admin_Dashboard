@@ -108,9 +108,12 @@ export default function DashboardPage() {
                       </td>
                       <td className="px-6 py-4 text-sm text-slate-500">{attempt.date}</td>
                       <td className="px-6 py-4 text-right">
-                        <button className="px-4 py-2 bg-[#00aaff]/10 text-[#00aaff] hover:bg-[#00aaff] hover:text-white rounded-lg text-xs font-bold transition-all">
+                        <Link 
+                          href={`/users/${attempt.id}`}
+                          className="inline-block px-4 py-2 bg-[#00aaff]/10 text-[#00aaff] hover:bg-[#00aaff] hover:text-white rounded-lg text-xs font-bold transition-all"
+                        >
                           View Detail
-                        </button>
+                        </Link>
                       </td>
                     </tr>
                   ))}
@@ -119,6 +122,13 @@ export default function DashboardPage() {
             </div>
           </motion.div>
 
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+        
+            
+            
+           
+          </div>
         </div>
       </main>
     </div>

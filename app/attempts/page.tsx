@@ -123,7 +123,6 @@ export default function AttemptsPage() {
                     <td className="px-6 py-4 text-right">
                       <Link href={`/users/${attempt.id}`} className="text-[#00aaff] hover:text-[#00aaff]/80 text-sm font-bold flex items-center gap-1 ml-auto">
                         View History
-                        <ChevronRight size={16} />
                       </Link>
                     </td>
                   </tr>
