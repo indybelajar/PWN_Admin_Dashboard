@@ -119,33 +119,6 @@ export default function DashboardPage() {
             </div>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-              className="lg:col-span-2 bg-gradient-to-br from-[#00aaff] to-[#00aaff]/80 p-6 rounded-xl text-white flex justify-between items-center relative overflow-hidden"
-            >
-              <div className="z-10">
-                <h4 className="text-xl font-bold mb-2">New Security Protocols Active</h4>
-                <p className="text-white/80 text-sm max-w-md">System wide encryption and multi-factor authentication are now enforced for all administrative accounts.</p>
-                <button className="mt-4 px-6 py-2 bg-white text-[#00aaff] rounded-lg font-bold text-sm shadow-xl shadow-black/10">Read update</button>
-              </div>
-              <Shield size={120} className="absolute -right-4 -bottom-4 opacity-10" />
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: 0.4 }}
-              className="bg-gradient-to-br from-[#FF0099] to-pink-600 p-6 rounded-xl text-white flex flex-col justify-center items-center text-center relative overflow-hidden"
-            >
-              <Rocket size={36} className="mb-2" />
-              <h4 className="text-lg font-bold">Premium Features</h4>
-              <p className="text-white/80 text-sm mb-4">Export unlimited reports</p>
-              <button className="w-full py-2 bg-white/20 hover:bg-white/30 rounded-lg font-bold text-sm border border-white/30 backdrop-blur-sm transition-all">Upgrade Now</button>
-            </motion.div>
-          </div>
         </div>
       </main>
     </div>
