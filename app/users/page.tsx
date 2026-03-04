@@ -12,15 +12,13 @@ const users = [
     id: 1, 
     name: 'Alex River', 
     email: 'alex@example.com', 
-    handle: '@alex_riv', 
     date: 'Oct 12, 2023',
     avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDiidCybh1AhSI2iClUuoGJ7dwlcoZ7l--507ERZs60jyctYqnZiw1gpLNpEeh3pvnmFs8ePMEhFZa_OWaBTMenggdriIL5aQX3m2Wqhde8nqLCr0yGcfsDSR2VQoK5GUmuhI2oWmebQrB31nn5qC93EUCm60XpYR9qn7vUcS5jXOGuTMyU5Q_Kc9up_4ZErHGpIDsJ18QS-48wg2ntSyJ0O2nLvT28erPlcFTlkX1kflJ1LafeYDk0dlEZTkOcMsay_-SPZ8AsJy8O'
   },
   { 
     id: 2, 
     name: 'Sam Smith', 
-    email: 'sam.s@provider.com', 
-    handle: '@samsmith_99', 
+    email: 'sam.s@provider.com',  
     date: 'Oct 15, 2023',
     avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAbP728GuAUzHxGMorjnHQnzlzV4tF72Kqa_rf9t0GCZ3_u0KYB_k4aGGeteVIdPJf6xyU9hTcdbXe5DYKMID4WyMc7NWQESlbwTvuIYlmtdSiS53tMzEynkqYi6CciAdWLjhv1PVQ2JxmgriwgaH5-QCbhh4sHgYQBMDu7Txrg7BlRAtXZGLiY6wRV7ebeu2VQCgT4H4sqBXersMvY09GWXd0PyeywH9rcQpfw8SKt9b2oivG7hNtN1EBS74L8lKwxcclj-iPXYmKx'
   },
@@ -28,7 +26,6 @@ const users = [
     id: 3, 
     name: 'Jordan Lee', 
     email: 'jlee@corp.com', 
-    handle: '@jordan_lee', 
     date: 'Oct 18, 2023',
     avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAP270IbEgzvNPINxqClQi0OEPNS5UuBYk4ek0_v6Q8-2-eRvgY1gVBfx8C7TK8HT-TdNyHY7XH9uhSWsbNOyDAnxgsilvFshvqNdoFw2TuC2kP9E8EIoeOn9kj6R-Q2PNUqr5GC45CQMRwgrI_9Qa7hUsfhRrU5_rOwE5Ts7w_eIA1mfQWWIV_dDvyMCWuaC7NguDcjm_wj6jnndFNEr07HKUjucVf6yhP_b_lz8dXYrw4ivH4UeXoFCuyFp16jgmjGyYFrVudGaLW'
   },
@@ -36,7 +33,6 @@ const users = [
     id: 4, 
     name: 'Taylor Wong', 
     email: 'taylor.w@mail.com', 
-    handle: '@twong_studio', 
     date: 'Oct 20, 2023',
     avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBzUYUKwWNXc7XLpCp9MgAQHJ_nO8myJ4d9ygmOx_XjtM3EzqHNKEkpJMKket-7VylVYdzG3ZrV6N4R9NnU9vRJvX_R9e_YXmQLCtY4icT58qhXKugQlELyFCO8_HjTaqEIO3YvKPR4BIlupzZFkeTfNcg1dQPen6ruD9wYdAcGOxYaW0ow_eNx-injP80YpUptIRKNq-7Nv6LFoR8loFy5pHT1GkNOHfzs-JnRzFlFxQL8Kj1KdJbdeOqdNVqdOVVPDxbAA8RbM71z'
   },
@@ -44,7 +40,6 @@ const users = [
     id: 5, 
     name: 'Morgan Case', 
     email: 'm.case@service.io', 
-    handle: '@morgan_c', 
     date: 'Oct 22, 2023',
     avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDjF-ZYFiZvTX-2SDoH_fW9e01iS1Cx4_J62qDqZpykwxZRvvMRryb0ngFy9xyfAidk2y4eGQxbqgdfz0FgUJIyIGi1lgpB3QGkndfUiTr86G1EebU_3TuG4GqLW36IsZYpWXEfMmzxTJ_2uc3o-K73CWn1viJHapzSB7BNnl_7dH1_GqJDj1gw7I6yC1zMTKLErDsarrnP_LAOaRHJyX46iQ6vM6KTnsglxWWCXX4NqQfHTWCfEZKReW_1_Rg9yYGFeAdr5A1fnBtN'
   },
@@ -99,7 +94,7 @@ export default function UsersPage() {
                     <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Avatar</th>
                     <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Name</th>
                     <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Email</th>
-                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Instagram Handle</th>
+  
                     <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date Joined</th>
                     <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Action</th>
                   </tr>
@@ -114,11 +109,7 @@ export default function UsersPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-900">{user.name}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-slate-500 text-sm">{user.email}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#00aaff]/10 text-[#00aaff]">
-                          {user.handle}
-                        </span>
-                      </td>
+                    
                       <td className="px-6 py-4 whitespace-nowrap text-slate-500 text-sm">{user.date}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
                         <Link href={`/users/${user.id}`} className="text-[#00aaff] hover:text-[#00aaff]/80 font-bold text-sm transition-colors">

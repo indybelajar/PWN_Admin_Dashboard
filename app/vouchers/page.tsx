@@ -18,8 +18,7 @@ import { motion, AnimatePresence } from 'motion/react';
 const applications = [
   { 
     id: '12345', 
-    name: 'Alex Johnson', 
-    handle: '@alex_j_lifestyle', 
+    name: 'Alex Johnson',  
     status: 'Pending', 
     submittedAt: '2 hours ago',
     email: 'alex.johnson@example.com',
@@ -30,7 +29,6 @@ const applications = [
   { 
     id: '12346', 
     name: 'Sarah Miller', 
-    handle: '@sarah_creates', 
     status: 'Pending', 
     submittedAt: '5 hours ago',
     email: 'sarah.miller@example.com',
@@ -41,7 +39,31 @@ const applications = [
 ];
 
 export default function VoucherApplicationsPage() {
+  const [appList, setAppList] = React.useState(applications);
   const [selectedApp, setSelectedApp] = React.useState<any>(null);
+  const [actionResult, setActionResult] = React.useState<'approved' | 'rejected' | null>(null);
+  const [isProcessing, setIsProcessing] = React.useState(false);
+
+  const handleAction = (type: 'approved' | 'rejected') => {
+    setIsProcessing(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsProcessing(false);
+      setActionResult(type);
+      
+      // Update the status in the list
+      setAppList(prev => prev.map(app => 
+        app.id === selectedApp.id 
+          ? { ...app, status: type === 'approved' ? 'Approved' : 'Rejected' } 
+          : app
+      ));
+    }, 1500);
+  };
+
+  const closeModal = () => {
+    setSelectedApp(null);
+    setActionResult(null);
+  };
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -85,7 +107,7 @@ export default function VoucherApplicationsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {applications.map((app) => (
+                {appList.map((app) => (
                   <tr key={app.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
@@ -95,12 +117,15 @@ export default function VoucherApplicationsPage() {
                         ></div>
                         <div>
                           <p className="text-sm font-semibold">{app.name}</p>
-                          <p className="text-xs text-slate-500">{app.handle}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700">
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                        app.status === 'Pending' ? 'bg-amber-100 text-amber-700' :
+                        app.status === 'Approved' ? 'bg-green-100 text-green-700' :
+                        'bg-red-100 text-red-700'
+                      }`}>
                         {app.status}
                       </span>
                     </td>
@@ -138,67 +163,127 @@ export default function VoucherApplicationsPage() {
               >
                 <div className="flex items-center justify-between p-6 border-b border-slate-100">
                   <div className="flex flex-col">
-                    <h3 className="text-xl font-bold">Application #{selectedApp.id}</h3>
-                    <p className="text-sm text-slate-500">Submitted for &quot;{selectedApp.campaign}&quot; Campaign</p>
+                    <h3 className="text-xl font-bold">
+                      {actionResult ? 'Action Successful' : `Application #${selectedApp.id}`}
+                    </h3>
+                    <p className="text-sm text-slate-500">
+                      {actionResult 
+                        ? `The application has been ${actionResult}.` 
+                        : `Submitted for "${selectedApp.campaign}" Campaign`}
+                    </p>
                   </div>
                   <button 
-                    onClick={() => setSelectedApp(null)}
+                    onClick={closeModal}
                     className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-400 transition-colors"
                   >
                     <X size={20} />
                   </button>
                 </div>
 
-                <div className="p-8 overflow-y-auto space-y-8">
-                  <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
-                    <div 
-                      className="w-24 h-24 rounded-full bg-slate-200 shrink-0 border-4 border-slate-50 shadow-sm bg-center bg-cover" 
-                      style={{ backgroundImage: `url('${selectedApp.avatar}')` }}
-                    ></div>
-                    <div className="space-y-1">
-                      <h4 className="text-2xl font-bold text-slate-900">{selectedApp.name}</h4>
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-2 text-slate-600">
-                          <Mail size={14} />
-                          <span className="text-sm">{selectedApp.email}</span>
+                <div className="p-8 overflow-y-auto min-h-[300px] flex flex-col">
+                  <AnimatePresence mode="wait">
+                    {!actionResult ? (
+                      <motion.div
+                        key="details"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="space-y-8"
+                      >
+                        <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
+                          <div 
+                            className="w-24 h-24 rounded-full bg-slate-200 shrink-0 border-4 border-slate-50 shadow-sm bg-center bg-cover" 
+                            style={{ backgroundImage: `url('${selectedApp.avatar}')` }}
+                          ></div>
+                          <div className="space-y-1">
+                            <h4 className="text-2xl font-bold text-slate-900">{selectedApp.name}</h4>
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-2 text-slate-600">
+                                <Mail size={14} />
+                                <span className="text-sm">{selectedApp.email}</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-[#00aaff]">
+                                <AtSign size={14} />
+                                <span className="text-sm font-medium">{selectedApp.handle}</span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2 text-[#00aaff]">
-                          <AtSign size={14} />
-                          <span className="text-sm font-medium">{selectedApp.handle}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
 
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h5 className="text-sm font-bold uppercase tracking-widest text-slate-400">Submitted Screenshot</h5>
-                      <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded font-medium">VERIFIED_METADATA</span>
-                    </div>
-                    <div className="rounded-lg overflow-hidden border border-slate-200 aspect-video bg-slate-50 flex items-center justify-center relative group">
-                      <div 
-                        className="absolute inset-0 bg-center bg-cover transition-transform group-hover:scale-105" 
-                        style={{ backgroundImage: `url('${selectedApp.screenshot}')` }}
-                      ></div>
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                        <button className="bg-white/90 backdrop-blur text-slate-900 px-4 py-2 rounded-full font-semibold text-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2 shadow-lg">
-                          <ZoomIn size={16} />
-                          View Full Size
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between">
+                            <h5 className="text-sm font-bold uppercase tracking-widest text-slate-400">Submitted Screenshot</h5>
+                            <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded font-medium">VERIFIED_METADATA</span>
+                          </div>
+                          <div className="rounded-lg overflow-hidden border border-slate-200 aspect-video bg-slate-50 flex items-center justify-center relative group">
+                            <div 
+                              className="absolute inset-0 bg-center bg-cover transition-transform group-hover:scale-105" 
+                              style={{ backgroundImage: `url('${selectedApp.screenshot}')` }}
+                            ></div>
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                              <button className="bg-white/90 backdrop-blur text-slate-900 px-4 py-2 rounded-full font-semibold text-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2 shadow-lg">
+                                <ZoomIn size={16} />
+                                View Full Size
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="success"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="flex-1 flex flex-col items-center justify-center text-center py-12"
+                      >
+                        <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 ${
+                          actionResult === 'approved' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+                        }`}>
+                          {actionResult === 'approved' ? <CheckCircle size={48} /> : <XCircle size={48} />}
+                        </div>
+                        <h4 className="text-2xl font-bold mb-2">
+                          Application {actionResult === 'approved' ? 'Approved' : 'Rejected'}
+                        </h4>
+                        <p className="text-slate-500 max-w-xs">
+                          The applicant will be notified of your decision via email and in-app notification.
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
-                <div className="p-6 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
-                  <button className="flex-1 bg-[#00aaff] hover:bg-[#00aaff]/90 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#00aaff]/20">
-                    <CheckCircle size={20} />
-                    Approve Application
-                  </button>
-                  <button className="flex-1 border-2 border-[#FF0099] text-[#FF0099] hover:bg-[#FF0099] hover:text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all">
-                    <XCircle size={20} />
-                    Reject Submission
-                  </button>
+                <div className="p-6 bg-slate-50 border-t border-slate-100">
+                  {!actionResult ? (
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <button 
+                        disabled={isProcessing}
+                        onClick={() => handleAction('approved')}
+                        className="flex-1 bg-[#00aaff] hover:bg-[#00aaff]/90 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#00aaff]/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isProcessing ? (
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <CheckCircle size={20} />
+                        )}
+                        {isProcessing ? 'Processing...' : 'Approve Application'}
+                      </button>
+                      <button 
+                        disabled={isProcessing}
+                        onClick={() => handleAction('rejected')}
+                        className="flex-1 border-2 border-[#FF0099] text-[#FF0099] hover:bg-[#FF0099] hover:text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <XCircle size={20} />
+                        Reject Submission
+                      </button>
+                    </div>
+                  ) : (
+                    <button 
+                      onClick={closeModal}
+                      className="w-full bg-slate-900 text-white font-bold py-3 rounded-lg transition-all hover:bg-slate-800"
+                    >
+                      Dismiss
+                    </button>
+                  )}
                 </div>
               </motion.div>
             </div>
