@@ -12,7 +12,6 @@ const stats = [
     label: 'Total Quiz Attempts', 
     value: '12,840', 
     change: '12%', 
-    icon: TrendingUp, 
     color: 'text-[#00aaff]', 
     bgColor: 'bg-[#00aaff]/10' 
   },
@@ -20,7 +19,6 @@ const stats = [
     label: 'Total Users', 
     value: '3,120', 
     change: '5%', 
-    icon: Users, 
     color: 'text-[#FF0099]', 
     bgColor: 'bg-[#FF0099]/10' 
   },
@@ -60,16 +58,12 @@ export default function DashboardPage() {
                 transition={{ duration: 0.4, delay: index * 0.1 }}
                 className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex items-center gap-5 group hover:border-[#00aaff]/50 transition-colors cursor-default"
               >
-                <div className={`w-14 h-14 ${stat.bgColor} rounded-lg flex items-center justify-center ${stat.color} group-hover:scale-110 transition-transform`}>
-                  <stat.icon size={30} />
-                </div>
+              
                 <div>
                   <p className="text-sm font-medium text-slate-500">{stat.label}</p>
                   <div className="flex items-baseline gap-2">
                     <h3 className="text-3xl font-bold">{stat.value}</h3>
-                    <span className="text-xs font-bold text-green-500 flex items-center">
-                      <TrendingUp size={14} className="mr-1" /> {stat.change}
-                    </span>
+                 
                   </div>
                 </div>
               </motion.div>

@@ -17,7 +17,6 @@ const navItems = [
   { name: 'Dashboard', icon: LayoutDashboard, href: '/' },
   { name: 'Voucher Applications', icon: Ticket, href: '/vouchers' },
   { name: 'Users', icon: Users, href: '/users' },
-  { name: 'Attempts', icon: History, href: '/attempts' },
   { name: 'Settings', icon: Settings, href: '/settings' },
 ];
 

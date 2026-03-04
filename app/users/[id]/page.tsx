@@ -100,7 +100,6 @@ export default function UserHistoryPage() {
                 <tr className="bg-slate-50/50">
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date & Time</th>
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Character Result</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Dominant Option</th>
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Details</th>
                 </tr>
               </thead>
@@ -116,9 +115,7 @@ export default function UserHistoryPage() {
                         {attempt.result}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <span className="text-sm font-medium text-slate-600">{attempt.option}</span>
-                    </td>
+             
                     <td className="px-6 py-4 text-right">
                       <button 
                         onClick={() => setSelectedAttempt(attempt)}
@@ -169,11 +166,7 @@ export default function UserHistoryPage() {
                     <div className="flex flex-col gap-2">
                       <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500">CHARACTER RESULT ANALYSIS</h3>
                       <div className="flex flex-col mb-1">
-                        <span className="text-[10px] uppercase font-bold text-slate-400">Dominant Choice</span>
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-xl font-bold text-slate-900">Option {selectedAttempt.result}</span>
-                          <span className="text-sm text-slate-500 font-medium">6 / 9 questions</span>
-                        </div>
+                      
                       </div>
                       <div className="flex items-center gap-2 text-slate-600">
                         <History size={16} className="text-[#00aaff]" />
