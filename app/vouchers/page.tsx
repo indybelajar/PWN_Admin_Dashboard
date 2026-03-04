@@ -202,10 +202,7 @@ export default function VoucherApplicationsPage() {
                                 <Mail size={14} />
                                 <span className="text-sm">{selectedApp.email}</span>
                               </div>
-                              <div className="flex items-center gap-2 text-[#00aaff]">
-                                <AtSign size={14} />
-                                <span className="text-sm font-medium">{selectedApp.handle}</span>
-                              </div>
+                             
                             </div>
                           </div>
                         </div>

@@ -74,10 +74,7 @@ export function Sidebar() {
               className="w-full h-full object-cover"
             />
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold truncate text-slate-900">Admin User</p>
-            <p className="text-xs text-slate-500 truncate">Super Admin</p>
-          </div>
+
         </div>
       </div>
     </aside>
