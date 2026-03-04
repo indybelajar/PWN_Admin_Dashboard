@@ -122,7 +122,7 @@ export default function UsersPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-slate-500 text-sm">{user.date}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
                         <Link href={`/users/${user.id}`} className="text-[#00aaff] hover:text-[#00aaff]/80 font-bold text-sm transition-colors">
-                          View Profile
+                          View History
                         </Link>
                       </td>
                     </tr>
