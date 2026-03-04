@@ -66,13 +66,7 @@ export function Sidebar() {
         </div>
         
         <div className="mt-4 p-2 bg-slate-50 rounded-xl flex items-center gap-3">
-          <div className="size-10 rounded-full bg-slate-200 overflow-hidden border-2 border-white">
-            <img 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0sRtklRuuF8B2e_ksJfAU7PEvbbzYMC0pI2l_X24pqHQ-58tnGygoSaALIJZBuUdXjmeHRttllPPPNElhCyT8wGMArYkcOm4HSLs8_m_Hzp-gPGeBXZbU4eCtBHk2Vqpeef8VFb1SrlDq8-v9p2167kb2NV_U5t-r5foDZT6D6i1WBK-R4w9XlAg0d-EKUXOJP2b21FbB4GII_GzBZ6ILtUDf0tG7Kt7rUIxotMZCoMWClRKNiEFD_hdla5qsPzg9YmWKM8sgUcKj" 
-              alt="Admin Avatar"
-              className="w-full h-full object-cover"
-            />
-          </div>
+          
 
         </div>
       </div>
