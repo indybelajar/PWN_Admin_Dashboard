@@ -3,61 +3,117 @@
 import * as React from 'react';
 import { Sidebar } from '@/components/Sidebar';
 import { Navbar } from '@/components/Navbar';
-import { Download, Search, ChevronRight } from 'lucide-react';
+import { Download, Search } from 'lucide-react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
 
-const users = [
-  { 
-    id: 1, 
-    name: 'Alex River', 
-    email: 'alex@example.com', 
-    date: 'Oct 12, 2023',
-    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDiidCybh1AhSI2iClUuoGJ7dwlcoZ7l--507ERZs60jyctYqnZiw1gpLNpEeh3pvnmFs8ePMEhFZa_OWaBTMenggdriIL5aQX3m2Wqhde8nqLCr0yGcfsDSR2VQoK5GUmuhI2oWmebQrB31nn5qC93EUCm60XpYR9qn7vUcS5jXOGuTMyU5Q_Kc9up_4ZErHGpIDsJ18QS-48wg2ntSyJ0O2nLvT28erPlcFTlkX1kflJ1LafeYDk0dlEZTkOcMsay_-SPZ8AsJy8O'
+// Shape sesuai GET /api/users/me dari API spec
+// (karena tidak ada endpoint list users, kita pakai shape yang sama untuk dummy)
+type User = {
+  id: string
+  email: string
+  full_name: string        // dari API spec: full_name
+  display_name: string | null  // dari API spec: display_name (nullable)
+  age: number | null       // dari API spec: age (nullable)
+  wishlist_guest_star: string | null  // dari API spec
+  role: 'USER' | 'ADMIN'  // dari API spec enum
+  // Extra fields untuk UI (tidak ada di API spec, tapi dibutuhkan admin view)
+  createdAt: string
+  avatarUrl?: string
+}
+
+// Dummy data — field names sesuai shape API spec /api/users/me
+const DUMMY_USERS: User[] = [
+  {
+    id: 'user-abc123',
+    email: 'alex@example.com',
+    full_name: 'Alex River',
+    display_name: 'alexriver',
+    age: 22,
+    wishlist_guest_star: 'Tulus',
+    role: 'USER',
+    createdAt: '2025-10-12T00:00:00.000Z',
+    avatarUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDiidCybh1AhSI2iClUuoGJ7dwlcoZ7l--507ERZs60jyctYqnZiw1gpLNpEeh3pvnmFs8ePMEhFZa_OWaBTMenggdriIL5aQX3m2Wqhde8nqLCr0yGcfsDSR2VQoK5GUmuhI2oWmebQrB31nn5qC93EUCm60XpYR9qn7vUcS5jXOGuTMyU5Q_Kc9up_4ZErHGpIDsJ18QS-48wg2ntSyJ0O2nLvT28erPlcFTlkX1kflJ1LafeYDk0dlEZTkOcMsay_-SPZ8AsJy8O',
   },
-  { 
-    id: 2, 
-    name: 'Sam Smith', 
-    email: 'sam.s@provider.com',  
-    date: 'Oct 15, 2023',
-    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAbP728GuAUzHxGMorjnHQnzlzV4tF72Kqa_rf9t0GCZ3_u0KYB_k4aGGeteVIdPJf6xyU9hTcdbXe5DYKMID4WyMc7NWQESlbwTvuIYlmtdSiS53tMzEynkqYi6CciAdWLjhv1PVQ2JxmgriwgaH5-QCbhh4sHgYQBMDu7Txrg7BlRAtXZGLiY6wRV7ebeu2VQCgT4H4sqBXersMvY09GWXd0PyeywH9rcQpfw8SKt9b2oivG7hNtN1EBS74L8lKwxcclj-iPXYmKx'
+  {
+    id: 'user-def456',
+    email: 'sam.s@provider.com',
+    full_name: 'Sam Smith',
+    display_name: 'samsmith_',
+    age: 19,
+    wishlist_guest_star: 'Raisa',
+    role: 'USER',
+    createdAt: '2025-10-15T00:00:00.000Z',
+    avatarUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAbP728GuAUzHxGMorjnHQnzlzV4tF72Kqa_rf9t0GCZ3_u0KYB_k4aGGeteVIdPJf6xyU9hTcdbXe5DYKMID4WyMc7NWQESlbwTvuIYlmtdSiS53tMzEynkqYi6CciAdWLjhv1PVQ2JxmgriwgaH5-QCbhh4sHgYQBMDu7Txrg7BlRAtXZGLiY6wRV7ebeu2VQCgT4H4sqBXersMvY09GWXd0PyeywH9rcQpfw8SKt9b2oivG7hNtN1EBS74L8lKwxcclj-iPXYmKx',
   },
-  { 
-    id: 3, 
-    name: 'Jordan Lee', 
-    email: 'jlee@corp.com', 
-    date: 'Oct 18, 2023',
-    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAP270IbEgzvNPINxqClQi0OEPNS5UuBYk4ek0_v6Q8-2-eRvgY1gVBfx8C7TK8HT-TdNyHY7XH9uhSWsbNOyDAnxgsilvFshvqNdoFw2TuC2kP9E8EIoeOn9kj6R-Q2PNUqr5GC45CQMRwgrI_9Qa7hUsfhRrU5_rOwE5Ts7w_eIA1mfQWWIV_dDvyMCWuaC7NguDcjm_wj6jnndFNEr07HKUjucVf6yhP_b_lz8dXYrw4ivH4UeXoFCuyFp16jgmjGyYFrVudGaLW'
+  {
+    id: 'user-ghi789',
+    email: 'jlee@corp.com',
+    full_name: 'Jordan Lee',
+    display_name: null,
+    age: 25,
+    wishlist_guest_star: 'Bernadya',
+    role: 'USER',
+    createdAt: '2025-10-18T00:00:00.000Z',
+    avatarUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAP270IbEgzvNPINxqClQi0OEPNS5UuBYk4ek0_v6Q8-2-eRvgY1gVBfx8C7TK8HT-TdNyHY7XH9uhSWsbNOyDAnxgsilvFshvqNdoFw2TuC2kP9E8EIoeOn9kj6R-Q2PNUqr5GC45CQMRwgrI_9Qa7hUsfhRrU5_rOwE5Ts7w_eIA1mfQWWIV_dDvyMCWuaC7NguDcjm_wj6jnndFNEr07HKUjucVf6yhP_b_lz8dXYrw4ivH4UeXoFCuyFp16jgmjGyYFrVudGaLW',
   },
-  { 
-    id: 4, 
-    name: 'Taylor Wong', 
-    email: 'taylor.w@mail.com', 
-    date: 'Oct 20, 2023',
-    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBzUYUKwWNXc7XLpCp9MgAQHJ_nO8myJ4d9ygmOx_XjtM3EzqHNKEkpJMKket-7VylVYdzG3ZrV6N4R9NnU9vRJvX_R9e_YXmQLCtY4icT58qhXKugQlELyFCO8_HjTaqEIO3YvKPR4BIlupzZFkeTfNcg1dQPen6ruD9wYdAcGOxYaW0ow_eNx-injP80YpUptIRKNq-7Nv6LFoR8loFy5pHT1GkNOHfzs-JnRzFlFxQL8Kj1KdJbdeOqdNVqdOVVPDxbAA8RbM71z'
+  {
+    id: 'user-jkl012',
+    email: 'taylor.w@mail.com',
+    full_name: 'Taylor Wong',
+    display_name: 'taylorwong99',
+    age: 21,
+    wishlist_guest_star: null,
+    role: 'USER',
+    createdAt: '2025-10-20T00:00:00.000Z',
+    avatarUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBzUYUKwWNXc7XLpCp9MgAQHJ_nO8myJ4d9ygmOx_XjtM3EzqHNKEkpJMKket-7VylVYdzG3ZrV6N4R9NnU9vRJvX_R9e_YXmQLCtY4icT58qhXKugQlELyFCO8_HjTaqEIO3YvKPR4BIlupzZFkeTfNcg1dQPen6ruD9wYdAcGOxYaW0ow_eNx-injP80YpUptIRKNq-7Nv6LFoR8loFy5pHT1GkNOHfzs-JnRzFlFxQL8Kj1KdJbdeOqdNVqdOVVPDxbAA8RbM71z',
   },
-  { 
-    id: 5, 
-    name: 'Morgan Case', 
-    email: 'm.case@service.io', 
-    date: 'Oct 22, 2023',
-    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDjF-ZYFiZvTX-2SDoH_fW9e01iS1Cx4_J62qDqZpykwxZRvvMRryb0ngFy9xyfAidk2y4eGQxbqgdfz0FgUJIyIGi1lgpB3QGkndfUiTr86G1EebU_3TuG4GqLW36IsZYpWXEfMmzxTJ_2uc3o-K73CWn1viJHapzSB7BNnl_7dH1_GqJDj1gw7I6yC1zMTKLErDsarrnP_LAOaRHJyX46iQ6vM6KTnsglxWWCXX4NqQfHTWCfEZKReW_1_Rg9yYGFeAdr5A1fnBtN'
+  {
+    id: 'user-mno345',
+    email: 'm.case@service.io',
+    full_name: 'Morgan Case',
+    display_name: 'morgancase',
+    age: null,
+    wishlist_guest_star: 'Hindia',
+    role: 'ADMIN',
+    createdAt: '2025-10-22T00:00:00.000Z',
+    avatarUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDjF-ZYFiZvTX-2SDoH_fW9e01iS1Cx4_J62qDqZpykwxZRvvMRryb0ngFy9xyfAidk2y4eGQxbqgdfz0FgUJIyIGi1lgpB3QGkndfUiTr86G1EebU_3TuG4GqLW36IsZYpWXEfMmzxTJ_2uc3o-K73CWn1viJHapzSB7BNnl_7dH1_GqJDj1gw7I6yC1zMTKLErDsarrnP_LAOaRHJyX46iQ6vM6KTnsglxWWCXX4NqQfHTWCfEZKReW_1_Rg9yYGFeAdr5A1fnBtN',
   },
-];
+]
 
 export default function UsersPage() {
+  const [searchQuery, setSearchQuery] = React.useState('')
+
+  // Client-side filter — search by full_name, email, atau display_name
+  const filteredUsers = React.useMemo(() =>
+    DUMMY_USERS.filter(u => {
+      const q = searchQuery.toLowerCase()
+      return (
+        u.full_name.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q) ||
+        (u.display_name?.toLowerCase().includes(q) ?? false)
+      )
+    }),
+    [searchQuery]
+  )
+
+  // ── Real fetch (uncomment when endpoint tersedia) ──────────────────────────
+  // Catatan: API spec saat ini hanya punya GET /api/users/me (single user).
+  // Untuk list users, perlu endpoint admin baru dari backend.
+  // ──────────────────────────────────────────────────────────────────────────
+
+  const formatDate = (iso: string) =>
+    new Date(iso).toLocaleDateString('id-ID', { dateStyle: 'medium' })
+
   return (
     <div className="flex min-h-screen">
       <Sidebar />
       <main className="flex-1 flex flex-col overflow-hidden">
         <Navbar title="Users" />
-        
+
         <div className="flex-1 overflow-y-auto p-8 space-y-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-            >
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
               <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight">Users Overview</h3>
               <p className="text-slate-500 mt-1">Manage and monitor all registered platform users</p>
             </motion.div>
@@ -74,15 +130,18 @@ export default function UsersPage() {
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search className="text-slate-400 group-focus-within:text-[#00aaff] transition-colors" size={18} />
               </div>
-              <input 
-                type="text" 
-                className="block w-full pl-10 pr-3 py-2.5 border-slate-200 bg-slate-50 rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00aaff]/20 focus:border-[#00aaff] transition-all" 
-                placeholder="Search users by name, email or handle..." 
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="block w-full pl-10 pr-3 py-2.5 border-slate-200 bg-slate-50 rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00aaff]/20 focus:border-[#00aaff] transition-all"
+                // Search by full_name, email, display_name sesuai field di API spec
+                placeholder="Search by full name, email, or display name..."
               />
             </div>
           </div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-white rounded-xl shadow-xl shadow-slate-200/50 border border-slate-200 overflow-hidden"
@@ -92,27 +151,67 @@ export default function UsersPage() {
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Avatar</th>
-                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Name</th>
+                    {/* full_name — field dari API spec */}
+                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Full Name</th>
                     <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Email</th>
-  
+                    {/* display_name — field dari API spec (nullable) */}
+                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Display Name</th>
+                    {/* role — field dari API spec enum USER | ADMIN */}
+                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Role</th>
                     <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date Joined</th>
                     <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {users.map((user) => (
+                  {filteredUsers.length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="px-6 py-8 text-center text-slate-400">
+                        No users found.
+                      </td>
+                    </tr>
+                  )}
+                  {filteredUsers.map((user) => (
                     <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="size-10 rounded-full bg-[#00aaff]/10 flex items-center justify-center overflow-hidden">
-                          <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                          {user.avatarUrl ? (
+                            <img src={user.avatarUrl} alt={user.full_name} className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="text-[#00aaff] font-bold text-sm">
+                              {user.full_name.charAt(0)}
+                            </span>
+                          )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-900">{user.name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-slate-500 text-sm">{user.email}</td>
-                    
-                      <td className="px-6 py-4 whitespace-nowrap text-slate-500 text-sm">{user.date}</td>
+                      {/* full_name dari API spec */}
+                      <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-900">
+                        {user.full_name}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-slate-500 text-sm">
+                        {user.email}
+                      </td>
+                      {/* display_name dari API spec — nullable, tampilkan em-dash jika null */}
+                      <td className="px-6 py-4 whitespace-nowrap text-slate-500 text-sm">
+                        {user.display_name ?? <span className="text-slate-300">—</span>}
+                      </td>
+                      {/* role dari API spec — enum USER | ADMIN */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-2 py-1 text-xs rounded-full font-bold
+                          ${user.role === 'ADMIN'
+                            ? 'bg-purple-100 text-purple-700'
+                            : 'bg-slate-100 text-slate-600'
+                          }`}>
+                          {user.role}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-slate-500 text-sm">
+                        {formatDate(user.createdAt)}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <Link href={`/users/${user.id}`} className="text-[#00aaff] hover:text-[#00aaff]/80 font-bold text-sm transition-colors">
+                        <Link
+                          href={`/users/${user.id}`}
+                          className="text-[#00aaff] hover:text-[#00aaff]/80 font-bold text-sm transition-colors"
+                        >
                           View History
                         </Link>
                       </td>
@@ -121,15 +220,16 @@ export default function UsersPage() {
                 </tbody>
               </table>
             </div>
-            
+
             <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
-              <p className="text-sm text-slate-500">Showing 1 to 5 of 48 users</p>
+              <p className="text-sm text-slate-500">
+                Showing {filteredUsers.length} of {DUMMY_USERS.length} users
+              </p>
+              {/* Pagination akan aktif saat ada endpoint list users dari backend */}
               <div className="flex items-center gap-2">
-                <button className="px-3 py-1 border border-slate-200 rounded bg-white text-sm disabled:opacity-50">Previous</button>
+                <button disabled className="px-3 py-1 border border-slate-200 rounded bg-white text-sm disabled:opacity-50">Previous</button>
                 <button className="px-3 py-1 border border-slate-200 rounded bg-[#00aaff] text-white text-sm">1</button>
-                <button className="px-3 py-1 border border-slate-200 rounded bg-white text-sm">2</button>
-                <button className="px-3 py-1 border border-slate-200 rounded bg-white text-sm">3</button>
-                <button className="px-3 py-1 border border-slate-200 rounded bg-white text-sm">Next</button>
+                <button disabled className="px-3 py-1 border border-slate-200 rounded bg-white text-sm disabled:opacity-50">Next</button>
               </div>
             </div>
           </motion.div>

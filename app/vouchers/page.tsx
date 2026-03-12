@@ -1,407 +1,405 @@
-'use client';
+'use client'
 
-import * as React from 'react';
-import { Sidebar } from '@/components/Sidebar';
-import { Navbar } from '@/components/Navbar';
-import { 
-  Search, 
-  X, 
-  CheckCircle, 
-  XCircle, 
-  Mail, 
-  AtSign, 
-  ZoomIn,
-  Ticket
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import * as React from 'react'
+import { Sidebar } from '@/components/Sidebar'
+import { Navbar } from '@/components/Navbar'
+import { Search, X, CheckCircle, XCircle, Mail, MailCheck, Clock, RotateCcw } from 'lucide-react'
+import { motion, AnimatePresence } from 'motion/react'
 
-const applications = [
-  { 
-    id: '12345', 
-    name: 'Alex Johnson', 
-    status: 'Pending', 
-    submittedAt: '2 hours ago',
-    email: 'alex.johnson@example.com',
-    campaign: 'Winter Essentials',
-    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCxCnif-eKJ-7g6k9YNlNGfUd4X9AAPM50dT9NlHAUxG1Q2vazQKOMx4csW31cSxsmW3pupgkW7OMp1dOepXbLKr33x2gICpR8kJWbDQLsgOxhy-22ci3fugLNe3g6YmYOLE2N2r86k7P8ZhXbDj8hhpn18gLZTzu3yWCLz2u8um7k1mpGm4RAIFmni_kIIcY70ehme6ZCCfVXCzToRBf24_7hCXKTfXrUqVm7SFx_Naed4VjV0dLjIQqiYipSCAJcQNHtUAqkKk8LA',
-    screenshot: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBO2XeV5rfBSMAQ3w4yHDagCEwuYdkq_kD-rPLYEmP2WKMQ4dQ2psrJjOo9GC7cUf49cPHTQD_ZAhj7iJub8PFjCB7Ry2zSBtNlAkfGcfBZYET2T97fnFNiBR-Uznx8Aosx4N21SI2B7Mo3eQXqBUhJFijfe0hDbY7vRCHLf3KX2gDifHD7tlmG4viUrNLs1WBJNVWUZTu8AO-kIYqdDnA3PLRQcH2WoK9EDPXR3YMaYk8568_FWP-yxpq4kbDb-jo9UTpLS-X5ibb9',
-    emailed: false
-  },
-  { 
-    id: '12346', 
-    name: 'Sarah Miller', 
-    status: 'Pending', 
-    submittedAt: '5 hours ago',
-    email: 'sarah.miller@example.com',
-    campaign: 'Winter Essentials',
-    avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDwUh24vZSoN36i8U57ORgdljqCnfj9X998oFkaTKOdXSKLmgauCadEpZPS81tbCSboMZZLtqbonlQdLQcqTkbxskFatf1R6FXyfVLhRzhbYTxs-hBcLHASI9SngyMHVdSpTOzjBK1Sezkbm4rxK2zSeZhNr-QBHBVmVIfCicV2m7STKFyMeNqnkJZMNvh6WbuZa_edg9r4PtRNFfIpsTJTXIHlnLCQUhniBX7yikVB9yFCtdJ3x7rFS_izK7L2ZwKmHlsdqB8_T6Tv',
-    screenshot: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBO2XeV5rfBSMAQ3w4yHDagCEwuYdkq_kD-rPLYEmP2WKMQ4dQ2psrJjOo9GC7cUf49cPHTQD_ZAhj7iJub8PFjCB7Ry2zSBtNlAkfGcfBZYET2T97fnFNiBR-Uznx8Aosx4N21SI2B7Mo3eQXqBUhJFijfe0hDbY7vRCHLf3KX2gDifHD7tlmG4viUrNLs1WBJNVWUZTu8AO-kIYqdDnA3PLRQcH2WoK9EDPXR3YMaYk8568_FWP-yxpq4kbDb-jo9UTpLS-X5ibb9',
-    emailed: false
-  },
-];
+type ClaimStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
+
+type Claim = {
+  id: string
+  userId: string
+  proofImageUrl: string
+  status: ClaimStatus
+  createdAt: string
+  emailSent?: boolean // UI-only, belum di API spec
+}
+
+const DUMMY_CLAIMS: Claim[] = [
+  { id: 'claim-001', userId: 'user-abc123', proofImageUrl: 'https://placehold.co/800x450/f0f4ff/94a3b8?text=IG+Story+1', status: 'PENDING',  createdAt: '2025-03-10T08:30:00.000Z', emailSent: false },
+  { id: 'claim-002', userId: 'user-def456', proofImageUrl: 'https://placehold.co/800x450/f0fff4/94a3b8?text=IG+Story+2', status: 'APPROVED', createdAt: '2025-03-09T14:15:00.000Z', emailSent: true  },
+  { id: 'claim-003', userId: 'user-ghi789', proofImageUrl: 'https://placehold.co/800x450/fff0f0/94a3b8?text=IG+Story+3', status: 'REJECTED', createdAt: '2025-03-08T11:00:00.000Z', emailSent: true  },
+  { id: 'claim-004', userId: 'user-jkl012', proofImageUrl: 'https://placehold.co/800x450/f0f4ff/94a3b8?text=IG+Story+4', status: 'PENDING',  createdAt: '2025-03-07T09:45:00.000Z', emailSent: false },
+  { id: 'claim-005', userId: 'user-mno345', proofImageUrl: 'https://placehold.co/800x450/fff8f0/94a3b8?text=IG+Story+5', status: 'APPROVED', createdAt: '2025-03-06T16:20:00.000Z', emailSent: false },
+]
+
+const STATUS_CONFIG: Record<ClaimStatus, { label: string; dot: string; row: string; pill: string }> = {
+  PENDING:  { label: 'Pending',  dot: 'bg-amber-400',   row: '',  pill: 'bg-amber-50 text-amber-600 ring-1 ring-amber-200/80' },
+  APPROVED: { label: 'Approved', dot: 'bg-emerald-400', row: '',  pill: 'bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200/80' },
+  REJECTED: { label: 'Rejected', dot: 'bg-rose-400',    row: '',  pill: 'bg-rose-50 text-rose-500 ring-1 ring-rose-200/80' },
+}
 
 export default function VoucherApplicationsPage() {
-  const [appList, setAppList] = React.useState(applications);
-  const [selectedApp, setSelectedApp] = React.useState<any>(null);
-  const [actionResult, setActionResult] = React.useState<'approved' | 'rejected' | null>(null);
-  const [isProcessing, setIsProcessing] = React.useState(false);
-  const [rejectionNote, setRejectionNote] = React.useState('');
-  const [isRejecting, setIsRejecting] = React.useState(false);
+  const [claims, setClaims]               = React.useState<Claim[]>(DUMMY_CLAIMS)
+  const [selectedClaim, setSelectedClaim] = React.useState<Claim | null>(null)
+  const [searchQuery, setSearchQuery]     = React.useState('')
+  const [loading]                         = React.useState(false)
+  const [actionLoading, setActionLoading] = React.useState(false)
+  const [justActioned, setJustActioned]   = React.useState<ClaimStatus | null>(null)
 
-  const handleAction = (type: 'approved' | 'rejected') => {
-    setIsProcessing(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsProcessing(false);
-      setActionResult(type);
-      
-      // Update the status in the list
-      setAppList(prev => prev.map(app => 
-        app.id === selectedApp.id 
-          ? { ...app, status: type === 'approved' ? 'Approved' : 'Rejected', note: type === 'rejected' ? rejectionNote : undefined } 
-          : app
-      ));
-    }, 1500);
-  };
+  const PAGE_SIZE = 10
+  const [page, setPage] = React.useState(1)
 
-  const toggleEmailed = (id: string) => {
-    setAppList(prev => prev.map(app => 
-      app.id === id ? { ...app, emailed: !app.emailed } : app
-    ));
-    if (selectedApp?.id === id) {
-      setSelectedApp((prev: any) => ({ ...prev, emailed: !prev.emailed }));
-    }
-  };
+  const filteredClaims = React.useMemo(() =>
+    claims.filter(c =>
+      c.userId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.id.toLowerCase().includes(searchQuery.toLowerCase())
+    ), [claims, searchQuery]
+  )
 
-  const closeModal = () => {
-    setSelectedApp(null);
-    setActionResult(null);
-    setRejectionNote('');
-    setIsRejecting(false);
-  };
+  const totalPages  = Math.max(1, Math.ceil(filteredClaims.length / PAGE_SIZE))
+  const pagedClaims = filteredClaims.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  React.useEffect(() => { setPage(1) }, [searchQuery])
+
+  const handleAction = async (status: ClaimStatus) => {
+    if (!selectedClaim) return
+    setActionLoading(true)
+    try {
+      // await fetch(`/api/admin/promo/claims/${selectedClaim.id}`, {
+      //   method: 'PATCH',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ status }),
+      // })
+      setClaims(prev => prev.map(c => c.id === selectedClaim.id ? { ...c, status } : c))
+      setSelectedClaim(prev => prev ? { ...prev, status } : null)
+      setJustActioned(status)
+      setTimeout(() => setJustActioned(null), 1600)
+    } catch (err) { console.error(err) }
+    setActionLoading(false)
+  }
+
+  const handleToggleEmail = (claimId: string) => {
+    setClaims(prev => prev.map(c => c.id === claimId ? { ...c, emailSent: !c.emailSent } : c))
+    setSelectedClaim(prev => prev?.id === claimId ? { ...prev, emailSent: !prev.emailSent } : prev)
+  }
+
+  const closeModal = () => { setSelectedClaim(null); setJustActioned(null) }
+
+  const formatDate = (iso: string) =>
+    new Date(iso).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' })
+
+  const counts = React.useMemo(() => ({
+    total:    claims.length,
+    pending:  claims.filter(c => c.status === 'PENDING').length,
+    approved: claims.filter(c => c.status === 'APPROVED').length,
+    rejected: claims.filter(c => c.status === 'REJECTED').length,
+  }), [claims])
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-[#f7f8fc]">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto relative bg-slate-50">
+
+      <main className="flex-1 overflow-y-auto">
         <Navbar title="Voucher Applications" />
-        
-        <div className="p-8">
-          <div className="flex justify-between items-end mb-8">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-            >
-              <h2 className="text-3xl font-bold tracking-tight">Voucher Applications</h2>
-              <p className="text-slate-500 mt-1">Review and manage pending influencer submissions.</p>
-            </motion.div>
-            <div className="flex gap-3">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                <input 
-                  className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#00aaff]/50" 
-                  placeholder="Search applications..." 
-                  type="text"
-                />
+
+        <div className="p-8 space-y-6">
+
+          {/* ── Header ── */}
+          <div>
+            <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Voucher Applications</h2>
+            <p className="text-slate-400 text-sm mt-0.5">Review and manage incoming promo claims</p>
+          </div>
+
+          {/* ── Search ── */}
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="text-slate-400 group-focus-within:text-[#00aaff] transition-colors" size={18} />
               </div>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="block w-full pl-10 pr-3 py-2.5 border-slate-200 bg-slate-50 rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00aaff]/20 focus:border-[#00aaff] transition-all"
+                placeholder="Search by user ID or claim ID..."
+              />
             </div>
           </div>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+          {/* ── Stat pills ── */}
+          <div className="flex gap-2 flex-wrap">
+            {[
+              { label: 'Total',    value: counts.total,    cls: 'bg-white text-slate-500 ring-1 ring-slate-200' },
+              { label: 'Pending',  value: counts.pending,  cls: 'bg-amber-50 text-amber-600 ring-1 ring-amber-100' },
+              { label: 'Approved', value: counts.approved, cls: 'bg-emerald-50 text-emerald-600 ring-1 ring-emerald-100' },
+              { label: 'Rejected', value: counts.rejected, cls: 'bg-rose-50 text-rose-500 ring-1 ring-rose-100' },
+            ].map(s => (
+              <span key={s.label} className={`${s.cls} px-3.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2`}>
+                <span className="font-bold text-sm">{s.value}</span>
+                <span className="opacity-60">{s.label}</span>
+              </span>
+            ))}
+          </div>
+
+          {/* ── Table ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"
+            className="bg-white rounded-2xl overflow-hidden shadow-sm shadow-slate-200/60 ring-1 ring-slate-100"
           >
             <table className="w-full text-left">
-              <thead className="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase text-slate-500">
-                <tr>
-                  <th className="px-6 py-4">Applicant</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4">Emailed</th>
-                  <th className="px-6 py-4">Submitted At</th>
-                  <th className="px-6 py-4 text-right">Action</th>
+              <thead>
+                <tr className="border-b border-slate-100">
+                  <th className="px-6 py-4 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Claim ID</th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">User ID</th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Email</th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Created At</th>
+                  <th className="px-6 py-4 text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
-                {appList.map((app) => (
-                  <tr key={app.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div 
-                          className="w-10 h-10 rounded-full bg-slate-200 bg-center bg-cover border border-slate-100" 
-                          style={{ backgroundImage: `url('${app.avatar}')` }}
-                        ></div>
-                        <div>
-                          <p className="text-sm font-semibold">{app.name}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                        app.status === 'Pending' ? 'bg-amber-100 text-amber-700' :
-                        app.status === 'Approved' ? 'bg-green-100 text-green-700' :
-                        'bg-red-100 text-red-700'
-                      }`}>
-                        {app.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      {app.status === 'Approved' ? (
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleEmailed(app.id);
-                          }}
-                          className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] font-bold uppercase transition-colors ${
-                            app.emailed 
-                              ? 'bg-blue-100 text-blue-700' 
-                              : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
-                          }`}
-                        >
-                          <Mail size={12} fill={app.emailed ? 'currentColor' : 'none'} />
-                          {app.emailed ? 'Emailed' : 'Not Emailed'}
-                        </button>
-                      ) : (
-                        <span className="text-slate-300">—</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-slate-500">{app.submittedAt}</td>
-                    <td className="px-6 py-4 text-right">
-                      <button 
-                        onClick={() => setSelectedApp(app)}
-                        className="text-[#00aaff] text-sm font-semibold hover:underline"
-                      >
-                        View Details
-                      </button>
+
+              <tbody>
+                {loading && (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-16 text-center text-slate-300 text-sm">
+                      Loading claims…
                     </td>
                   </tr>
-                ))}
+                )}
+
+                {!loading && pagedClaims.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-16 text-center text-slate-300 text-sm">
+                      No claims found.
+                    </td>
+                  </tr>
+                )}
+
+                {!loading && pagedClaims.map((claim, i) => {
+                  const cfg = STATUS_CONFIG[claim.status]
+                  return (
+                    <motion.tr
+                      key={claim.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: i * 0.04 }}
+                      className="border-b border-slate-50 last:border-0 hover:bg-slate-50/70 transition-colors group"
+                    >
+                      {/* Claim ID */}
+                      <td className="px-6 py-4">
+                        <span className="font-mono text-xs text-slate-400">{claim.id}</span>
+                      </td>
+
+                      {/* User ID */}
+                      <td className="px-6 py-4">
+                        <span className="text-sm font-medium text-slate-700">{claim.userId}</span>
+                      </td>
+
+                      {/* Status */}
+                      <td className="px-6 py-4">
+                        <span className={`${cfg.pill} inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot} shrink-0`} />
+                          {cfg.label}
+                        </span>
+                      </td>
+
+                      {/* Email sent indicator */}
+                      <td className="px-6 py-4">
+                        {claim.emailSent ? (
+                          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-sky-500">
+                            <MailCheck size={13} /> Sent
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 text-xs text-slate-300">
+                            <Mail size={13} /> —
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Created At */}
+                      <td className="px-6 py-4">
+                        <span className="text-xs text-slate-400">{formatDate(claim.createdAt)}</span>
+                      </td>
+
+                      {/* Action */}
+                      <td className="px-6 py-4 text-right">
+                        <button
+                          onClick={() => setSelectedClaim(claim)}
+                           className="text-[#00aaff] hover:text-[#00aaff]/80 font-bold text-sm transition-colors"
+                        >
+                          Review 
+                        </button>
+                      </td>
+                    </motion.tr>
+                  )
+                })}
               </tbody>
             </table>
+
+            {/* Pagination */}
+            <div className="flex justify-between items-center px-6 py-4 border-t border-slate-50">
+              <p className="text-xs text-slate-400">
+                {filteredClaims.length} claims · page {page} of {totalPages}
+              </p>
+              <div className="flex gap-2">
+                <button
+                  disabled={page === 1}
+                  onClick={() => setPage(p => p - 1)}
+                  className="px-4 py-1.5 rounded-xl text-xs font-medium border border-slate-200 bg-white disabled:opacity-30 hover:bg-slate-50 transition-colors text-slate-600"
+                >
+                  Prev
+                </button>
+                <button
+                  disabled={page === totalPages}
+                  onClick={() => setPage(p => p + 1)}
+                  className="px-4 py-1.5 rounded-xl text-xs font-medium border border-slate-200 bg-white disabled:opacity-30 hover:bg-slate-50 transition-colors text-slate-600"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
           </motion.div>
         </div>
 
+        {/* ══════════════════════ MODAL ══════════════════════ */}
         <AnimatePresence>
-          {selectedApp && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setSelectedApp(null)}
-                className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
-              />
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
-              >
-                <div className="flex items-center justify-between p-6 border-b border-slate-100">
-                  <div className="flex flex-col">
-                    <h3 className="text-xl font-bold">
-                      {actionResult ? 'Action Successful' : `Application #${selectedApp.id}`}
-                    </h3>
-                    <p className="text-sm text-slate-500">
-                      {actionResult 
-                        ? `The application has been ${actionResult}.` 
-                        : `Submitted for "${selectedApp.campaign}" Campaign`}
-                    </p>
-                  </div>
-                  <button 
-                    onClick={closeModal}
-                    className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-400 transition-colors"
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
+          {selectedClaim && (() => {
+            const cfg = STATUS_CONFIG[selectedClaim.status]
+            return (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm"
+                  onClick={closeModal}
+                />
 
-                <div className="p-8 overflow-y-auto min-h-[300px] flex flex-col">
-                  <AnimatePresence mode="wait">
-                    {!actionResult ? (
-                      <motion.div
-                        key="details"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="space-y-8"
-                      >
-                        <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
-                          <div 
-                            className="w-24 h-24 rounded-full bg-slate-200 shrink-0 border-4 border-slate-50 shadow-sm bg-center bg-cover" 
-                            style={{ backgroundImage: `url('${selectedApp.avatar}')` }}
-                          ></div>
-                          <div className="space-y-1">
-                            <h4 className="text-2xl font-bold text-slate-900">{selectedApp.name}</h4>
-                            <div className="flex flex-col gap-1">
-                              <div className="flex items-center gap-2 text-slate-600">
-                                <Mail size={14} />
-                                <span className="text-sm">{selectedApp.email}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                <motion.div
+                  initial={{ scale: 0.97, opacity: 0, y: 10 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0.97, opacity: 0, y: 10 }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+                  className="relative bg-white rounded-3xl w-full max-w-2xl shadow-2xl shadow-slate-900/10 overflow-hidden flex"
+                >
+                  {/* ── Kiri: gambar portrait ── */}
+                  <div className="relative bg-black shrink-0" style={{ width: '260px' }}>
+                    <img
+                      src={selectedClaim.proofImageUrl}
+                      alt="Proof of IG Story"
+                      className="w-full h-full object-contain"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
 
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between">
-                            <h5 className="text-sm font-bold uppercase tracking-widest text-slate-400">Submitted Screenshot</h5>
-                          </div>
-                          <div className="rounded-lg overflow-hidden border border-slate-200 aspect-video bg-slate-50 flex items-center justify-center relative group">
-                            <div 
-                              className="absolute inset-0 bg-center bg-cover transition-transform group-hover:scale-105" 
-                              style={{ backgroundImage: `url('${selectedApp.screenshot}')` }}
-                            ></div>
-                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                              <button className="bg-white/90 backdrop-blur text-slate-900 px-4 py-2 rounded-full font-semibold text-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-2 shadow-lg">
-                                <ZoomIn size={16} />
-                                View Full Size
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-
-                        <AnimatePresence>
-                          {isRejecting && (
-                            <motion.div
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: 'auto' }}
-                              exit={{ opacity: 0, height: 0 }}
-                              className="space-y-3 pt-4 border-t border-slate-100"
-                            >
-                              <label className="block text-sm font-bold text-[#FF0099]">Rejection Reason (Optional)</label>
-                              <textarea
-                                value={rejectionNote}
-                                onChange={(e) => setRejectionNote(e.target.value)}
-                                placeholder="e.g. Screenshot is blurry, incorrect campaign, etc."
-                                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#FF0099]/20 min-h-[100px] resize-none"
-                              />
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="success"
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="flex-1 flex flex-col items-center justify-center text-center py-12"
-                      >
-                        <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 ${
-                          actionResult === 'approved' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
-                        }`}>
-                          {actionResult === 'approved' ? <CheckCircle size={48} /> : <XCircle size={48} />}
-                        </div>
-                        <h4 className="text-2xl font-bold mb-2">
-                          Application {actionResult === 'approved' ? 'Approved' : 'Rejected'}
-                        </h4>
-                        <p className="text-slate-500 max-w-xs">
-                          {actionResult === 'approved' 
-                            ? 'The applicant will be notified of your decision via email and in-app notification.'
-                            : `Rejected with note: "${rejectionNote || 'No specific reason provided'}"`}
-                        </p>
-                        
-                        {actionResult === 'approved' && (
-                          <motion.div 
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                            className="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-100 w-full max-w-sm"
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
-                                  <Mail size={20} />
-                                </div>
-                                <div className="text-left">
-                                  <p className="text-sm font-bold text-blue-900">Voucher Delivery</p>
-                                  <p className="text-xs text-blue-700">Mark if voucher was sent</p>
-                                </div>
-                              </div>
-                              <button
-                                onClick={() => toggleEmailed(selectedApp.id)}
-                                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-                                  selectedApp.emailed 
-                                    ? 'bg-blue-600 text-white shadow-md shadow-blue-200' 
-                                    : 'bg-white text-blue-600 border border-blue-200 hover:bg-blue-50'
-                                }`}
-                              >
-                                {selectedApp.emailed ? 'Marked as Emailed' : 'Mark as Emailed'}
-                              </button>
-                            </div>
-                          </motion.div>
-                        )}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-                <div className="p-6 bg-slate-50 border-t border-slate-100">
-                  {!actionResult ? (
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      {!isRejecting ? (
-                        <>
-                          <button 
-                            disabled={isProcessing}
-                            onClick={() => handleAction('approved')}
-                            className="flex-1 bg-[#00aaff] hover:bg-[#00aaff]/90 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#00aaff]/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            {isProcessing ? (
-                              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            ) : (
-                              <CheckCircle size={20} />
-                            )}
-                            {isProcessing ? 'Processing...' : 'Approve Application'}
-                          </button>
-                          <button 
-                            disabled={isProcessing}
-                            onClick={() => setIsRejecting(true)}
-                            className="flex-1 border-2 border-[#FF0099] text-[#FF0099] hover:bg-[#FF0099] hover:text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <XCircle size={20} />
-                            Reject Submission
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <button 
-                            disabled={isProcessing}
-                            onClick={() => handleAction('rejected')}
-                            className="flex-1 bg-[#FF0099] hover:bg-[#FF0099]/90 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#FF0099]/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            {isProcessing ? (
-                              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            ) : (
-                              <XCircle size={20} />
-                            )}
-                            {isProcessing ? 'Rejecting...' : 'Confirm Rejection'}
-                          </button>
-                          <button 
-                            disabled={isProcessing}
-                            onClick={() => {
-                              setIsRejecting(false);
-                              setRejectionNote('');
-                            }}
-                            className="px-6 border-2 border-slate-200 text-slate-500 hover:bg-slate-100 font-bold py-3 rounded-lg transition-all disabled:opacity-50"
-                          >
-                            Cancel
-                          </button>
-                        </>
-                      )}
+                    {/* Status chip */}
+                    <div className="absolute bottom-3 left-3">
+                      <span className={`${cfg.pill} bg-white/90 text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+                        {cfg.label}
+                      </span>
                     </div>
-                  ) : (
-                    <button 
-                      onClick={closeModal}
-                      className="w-full bg-slate-900 text-white font-bold py-3 rounded-lg transition-all hover:bg-slate-800"
-                    >
-                      Dismiss
-                    </button>
-                  )}
-                </div>
-              </motion.div>
-            </div>
-          )}
+
+                    {/* Flash on action */}
+                    <AnimatePresence>
+                      {justActioned && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+                        >
+                          <div className="bg-white rounded-2xl px-4 py-3 flex flex-col items-center gap-2 shadow-lg">
+                            {justActioned === 'APPROVED'
+                              ? <CheckCircle className="text-emerald-500" size={24} />
+                              : <XCircle className="text-rose-500" size={24} />
+                            }
+                            <span className="font-bold text-slate-800 text-xs">
+                              {justActioned === 'APPROVED' ? 'Approved' : 'Rejected'}
+                            </span>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* ── Kanan: info + actions ── */}
+                  <div className="flex-1 flex flex-col min-h-0">
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-slate-100">
+                      <p className="text-sm font-bold text-slate-700">Claim Detail</p>
+                      <button
+                        onClick={closeModal}
+                        className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 transition-colors"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+
+                    {/* Meta info */}
+                    <div className="px-5 py-4 space-y-2.5 flex-1">
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-wide font-semibold mb-0.5">Claim ID</p>
+                        <p className="text-xs font-mono text-slate-500">{selectedClaim.id}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-wide font-semibold mb-0.5">User ID</p>
+                        <p className="text-sm font-bold text-slate-800">{selectedClaim.userId}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-wide font-semibold mb-0.5">Submitted</p>
+                        <p className="text-xs text-slate-500">{formatDate(selectedClaim.createdAt)}</p>
+                      </div>
+
+                      {/* Email toggle */}
+                      <div className="pt-1">
+                        <button
+                          onClick={() => handleToggleEmail(selectedClaim.id)}
+                          className={`w-full flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl transition-all
+                            ${selectedClaim.emailSent
+                              ? 'bg-sky-50 text-sky-500 ring-1 ring-sky-200 hover:bg-sky-100'
+                              : 'bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600'
+                            }`}
+                        >
+                          {selectedClaim.emailSent
+                            ? <><MailCheck size={13} /> Emailed</>
+                            : <><Mail size={13} /> Mark as emailed</>
+                          }
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Action buttons — always editable, pinned to bottom */}
+                    <div className="px-5 pb-5 space-y-2 border-t border-slate-100 pt-4">
+                      {selectedClaim.status !== 'PENDING' && (
+                        <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide flex items-center gap-1.5">
+                          <RotateCcw size={10} /> Change decision
+                        </p>
+                      )}
+                      <div className="flex gap-2">
+                        <button
+                          disabled={actionLoading}
+                          onClick={() => handleAction('APPROVED')}
+                          className={`flex-1 py-2.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all duration-200
+                            ${selectedClaim.status === 'APPROVED'
+                              ? 'bg-emerald-500 text-white shadow-md shadow-emerald-200'
+                              : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white hover:shadow-md hover:shadow-emerald-200'
+                            } disabled:opacity-40`}
+                        >
+                          <CheckCircle size={14} /> Approve
+                        </button>
+                        <button
+                          disabled={actionLoading}
+                          onClick={() => handleAction('REJECTED')}
+                          className={`flex-1 py-2.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all duration-200
+                            ${selectedClaim.status === 'REJECTED'
+                              ? 'bg-rose-500 text-white shadow-md shadow-rose-200'
+                              : 'bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white hover:shadow-md hover:shadow-rose-200'
+                            } disabled:opacity-40`}
+                        >
+                          <XCircle size={14} /> Reject
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            )
+          })()}
         </AnimatePresence>
       </main>
     </div>
-  );
+  )
 }

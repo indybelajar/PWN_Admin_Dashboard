@@ -1,75 +1,70 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  LayoutDashboard, 
-  Users, 
-  History, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Users,
   Terminal,
-  ShieldCheck,
   Ticket,
-  Megaphone
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { name: 'Dashboard', icon: LayoutDashboard, href: '/' },
-  { name: 'Voucher Applications', icon: Ticket, href: '/vouchers' },
-  { name: 'Users', icon: Users, href: '/users' },
-  { name: 'Settings', icon: Settings, href: '/settings' },
+  { name: 'Dashboard',             icon: LayoutDashboard, href: '/' },
+  { name: 'Voucher Applications',  icon: Ticket,          href: '/vouchers' },
+  { name: 'Users',                 icon: Users,           href: '/users' },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
 
+  // Matches exact path for '/', prefix match for everything else
+  // e.g. /users/[id] → Users nav item stays active
+  const isActive = (href: string) =>
+    href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
+
   return (
     <aside className="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0 h-screen sticky top-0">
+
+      {/* Logo */}
       <div className="p-6 flex items-center gap-3">
         <div className="w-10 h-10 bg-[#00aaff] rounded-lg flex items-center justify-center text-white shadow-lg shadow-[#00aaff]/20">
           <Terminal size={24} />
         </div>
         <div>
-          <h1 className="font-bold text-lg leading-tight tracking-tight">PWN Admin</h1>
-          <p className="text-xs text-slate-500 font-medium">Console v2.4</p>
+          <h1 className="font-bold text-lg leading-tight tracking-tight">PWN Admin Dashboard</h1>
         </div>
       </div>
 
-      <nav className="flex-1 px-4 py-4 space-y-2">
+      {/* Nav */}
+      <nav className="flex-1 px-4 py-4 space-y-1">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const active = isActive(item.href);
           return (
             <Link
               key={item.name}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors font-semibold text-sm",
-                isActive 
-                  ? "bg-[#00aaff]/10 text-[#00aaff]" 
-                  : "text-slate-600 hover:bg-slate-50"
+                'flex items-center gap-3 px-4 py-3 rounded-lg transition-colors font-semibold text-sm',
+                active
+                  ? 'bg-[#00aaff]/10 text-[#00aaff]'
+                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
               )}
             >
-              <item.icon size={20} className={isActive ? "text-[#00aaff]" : "text-slate-500"} />
+              <item.icon
+                size={20}
+                className={active ? 'text-[#00aaff]' : 'text-slate-400'}
+              />
               <span>{item.name}</span>
+
+              {/* Active indicator dot */}
+              {active && (
+                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#00aaff]" />
+              )}
             </Link>
           );
         })}
       </nav>
-
-      <div className="p-4 mt-auto">
-        <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">System Status</p>
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            <span className="text-xs font-medium">All systems normal</span>
-          </div>
-        </div>
-        
-        <div className="mt-4 p-2 bg-slate-50 rounded-xl flex items-center gap-3">
-          
-
-        </div>
-      </div>
     </aside>
   );
 }
